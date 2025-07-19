@@ -20,6 +20,9 @@ def group_required(group_name):
         return _wrapped_view
     return decorator
 
+def is_in_group(user, group_name):
+    return user.is_authenticated and user.groups.filter(name=group_name).exists()
+
 # ---------------------------------------------
 # ✅ Check if sample_module is installed
 # ---------------------------------------------
@@ -47,3 +50,23 @@ def is_description_enabled():
         return module.version >= 2
     except ModuleRegistry.DoesNotExist:
         return False
+    
+# Role decorators
+def require_manager(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not is_in_group(request.user, 'manager'):
+            messages.warning(request, "You need higher access to perform this action.")
+            return redirect('product_list')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+def require_user_or_manager(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.warning(request, "You must be logged in.")
+            return redirect('product_list')
+        if not (is_in_group(request.user, 'user') or is_in_group(request.user, 'manager')):
+            messages.warning(request, "You do not have permission.")
+            return redirect('product_list')
+        return view_func(request, *args, **kwargs)
+    return wrapper

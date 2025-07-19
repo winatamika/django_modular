@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Product List Module{% endblock %}
+{% block content %}
+
+<h2 class="mb-4">Product List Module</h2>
+
+<a href="{% url 'home' %}" class="btn btn-secondary mb-3">&larr; Back to Dashboard</a>
+<a href="{% url 'product_create' %}" class="btn btn-success mb-3 float-end">+ Add Product</a>
+
+<table class="table table-bordered table-hover">
+  <thead class="table-light">
+    <tr>
+      <th>Name</th>
+      <th>Barcode</th>
+      <th>Price</th>
+      <th>Stock</th>
+      {% if has_description %}<th>Description</th>{% endif %}
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in products %}
+      <tr>
+        <td>{{ product.name }}</td>
+        <td>{{ product.barcode }}</td>
+        <td>{{ product.price }}</td>
+        <td>{{ product.stock }}</td>
+        {% if has_description %}
+        <td>{{ product.description }}</td>
+        {% endif %}
+        <td>
+          <a href="{% url 'product_update' product.pk %}" class="btn btn-sm btn-warning">Edit</a>
+          <!-- Delete Button triggers modal -->
+          <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal{{ product.pk }}">Delete</button>
+
+          <!-- Modal -->
+          <div class="modal fade" id="confirmDeleteModal{{ product.pk }}" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header bg-warning">
+                  <h5 class="modal-title">Confirm Delete</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure to delete this data?
+                </div>
+                <div class="modal-footer">
+                  <form method="post" action="{% url 'product_delete' product.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

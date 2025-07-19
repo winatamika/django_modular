@@ -22,7 +22,6 @@ from modular_engine.views import home
 urlpatterns = [
     path('', home, name='home'),
     path('admin/', admin.site.urls),
-    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),  
     path('module/', include('modular_engine.urls')),
     path('sample-module/', include('sample_module.urls')),
 ]

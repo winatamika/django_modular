@@ -6,3 +6,6 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField()
     description = models.TextField(null=True, blank=True) 
+    
+    def __str__(self):
+        return f"{self.name}"

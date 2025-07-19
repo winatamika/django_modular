@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Module Dashboard{% endblock %}
+{% block content %}
+
+<h2 class="mb-4">Module Dashboard</h2>
+
+<table class="table table-bordered table-hover">
+  <thead class="table-light">
+    <tr>
+      <th>Module Name</th>
+      <th>Status</th>
+      <th>Version</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for module in modules %}
+      <tr>
+        <td>{{ module.name }}</td>
+        <td>{{ module.is_installed|yesno:"Installed,Not Installed" }}</td>
+        <td>v{{ module.version }}</td>
+        <td>
+          {% if module.is_installed %}
+            <a href="/sample-module/" class="btn btn-sm btn-primary">Go to Module</a>
+          {% endif %}
+
+          {% if not module.is_installed %}
+            <a href="{% url 'install_module' module.name %}" class="btn btn-sm btn-success">Install</a>
+          {% else %}
+            {% if module.version == 1 %}
+              <a href="{% url 'upgrade_module' module.name %}" class="btn btn-sm btn-warning">Upgrade</a>
+            {% elif module.version > 1 %}
+              <a href="{% url 'downgrade_module' module.name %}" class="btn btn-sm btn-outline-warning">Downgrade</a>
+            {% endif %}
+            <a href="{% url 'uninstall_module' module.name %}" class="btn btn-sm btn-danger">Uninstall</a>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

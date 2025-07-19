@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product
-from .utils import group_required, is_description_enabled
+from .utils import group_required, is_description_enabled, module_guard, require_manager, require_user_or_manager
 from modular_engine.models import ModuleRegistry
 
 # Check access to module
@@ -20,13 +20,14 @@ def module_guard(view_func):
 @module_guard
 def product_list(request):
     products = Product.objects.all()
-    return render(request, 'sample_module/product_list.html', {
+    return render(request, 'product_list.html', {
         'products': products,
         'has_description': is_description_enabled()
     })
 
-@group_required('manager')
+
 @module_guard
+@require_user_or_manager
 def product_create(request):
     if request.method == 'POST':
         Product.objects.create(
@@ -37,12 +38,12 @@ def product_create(request):
             description=request.POST.get('description', '')
         )
         return redirect('product_list')
-    return render(request, 'sample_module/product_form.html', {
+    return render(request, 'product_form.html', {
         'has_description': is_description_enabled()
     })
 
-@group_required('manager')
 @module_guard
+@require_user_or_manager
 def product_update(request, pk):
     product = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':
@@ -53,16 +54,15 @@ def product_update(request, pk):
         product.description = request.POST.get('description', '')
         product.save()
         return redirect('product_list')
-    return render(request, 'sample_module/product_form.html', {
+    return render(request, 'product_form.html', {
         'product': product,
         'has_description': is_description_enabled()
     })
 
-@group_required('manager')
 @module_guard
+@require_manager
 def product_delete(request, pk):
     product = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':
         product.delete()
-        return redirect('product_list')
-    return render(request, 'sample_module/confirm_delete.html', {'product': product})
+    return redirect('product_list')

@@ -6,5 +6,7 @@ class ModuleRegistry(models.Model):
     is_installed = models.BooleanField(default=False)
     version = models.PositiveIntegerField(default=1)  # optional for upgrades
     
+    def __str__(self):
+        return f"{self.name}"
     
     
