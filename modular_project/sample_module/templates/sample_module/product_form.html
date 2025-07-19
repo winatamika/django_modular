@@ -1,0 +1,13 @@
+<form method="post">
+  {% csrf_token %}
+  <input name="name" value="{{ product.name|default:'' }}" placeholder="Name"><br>
+  <input name="barcode" value="{{ product.barcode|default:'' }}" placeholder="Barcode"><br>
+  <input name="price" value="{{ product.price|default:'' }}" placeholder="Price"><br>
+  <input name="stock" value="{{ product.stock|default:'' }}" placeholder="Stock"><br>
+
+  {% if has_description %}
+    <textarea name="description" placeholder="Description">{{ product.description|default:'' }}</textarea><br>
+  {% endif %}
+
+  <button type="submit">Save</button>
+</form>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head><title>Module Dashboard</title></head>
+<body>
+<h1>Module Dashboard</h1>
+<ul>
+  {% for module in modules %}
+    <li>
+      {{ module.name }} -
+      {{ module.is_installed|yesno:"Installed,Not Installed" }} -
+      v{{ module.version }}
+
+      {% if module.is_installed %}
+        | <strong><a href="/sample-module/">Go to Module</a></strong>
+      {% endif %}
+
+      {% if not module.is_installed %}
+        | <a href="{% url 'install_module' module.name %}">Install</a>
+      {% else %}
+        {% if module.version == 1 %}
+          | <a href="{% url 'upgrade_module' module.name %}">Upgrade</a>
+        {% elif module.version > 1 %}
+          | <a href="{% url 'downgrade_module' module.name %}">Downgrade</a>
+        {% endif %}
+        | <a href="{% url 'uninstall_module' module.name %}">Uninstall</a>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+</body>
+</html>
