@@ -21,14 +21,14 @@ def uninstall_module(request, name):
         Product.objects.all().delete()
         ModuleRegistry.objects.filter(name=name).update(
             is_installed=False,
-            version=1  # 👈 reset version on uninstall
+            version=1 
         )
     return redirect('home')
 
 def upgrade_module(request, name):
     if name == 'sample_module':
         module, _ = ModuleRegistry.objects.get_or_create(name=name)
-        module.version += 1  # simulate version bump
+        module.version += 1 
         module.save()
     return redirect('home')
 

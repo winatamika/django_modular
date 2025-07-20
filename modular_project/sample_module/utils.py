@@ -47,7 +47,7 @@ def module_guard(view_func):
 def is_description_enabled():
     try:
         module = ModuleRegistry.objects.get(name='sample_module')
-        return module.version >= 2
+        return module.version >= 2 #this can be added as upgraded
     except ModuleRegistry.DoesNotExist:
         return False
     
